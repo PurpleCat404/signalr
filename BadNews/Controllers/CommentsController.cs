@@ -18,7 +18,17 @@ public class CommentsController : ControllerBase
     [HttpGet("api/news/{id}/comments")]
     public ActionResult<CommentsDto> GetCommentsForNews(Guid newsId)
     {
-        // TODO
-        throw new NotImplementedException();
+        var result = commentsRepository.GetComments(newsId)
+            .Select(x => new CommentDto
+            {
+                User = x.User,
+                Value = x.Value,
+            }
+            );
+        return new ActionResult<CommentsDto>(new CommentsDto
+        {
+            Comments = result.ToList(),
+            NewsId = newsId
+        });
     }
 }
