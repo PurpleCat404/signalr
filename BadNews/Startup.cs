@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
+using BadNews.Hubs;
 using BadNews.Models.Comments;
 using BadNews.Repositories.Comments;
 
@@ -38,6 +39,7 @@ namespace BadNews
             services.AddSingleton<IValidationAttributeAdapterProvider, StopWordsAttributeAdapterProvider>();
             services.AddSingleton<IWeatherForecastRepository, WeatherForecastRepository>();
             services.AddSingleton<ICommentsRepository, CommentsRepository>();
+            services.AddSignalR();
             services.AddAutoMapper(cfg =>
             {
                 cfg.CreateMap<Comment, CommentDto>();
@@ -88,6 +90,7 @@ namespace BadNews
                     action = "StatusCode"
                 });
                 endpoints.MapControllerRoute("default", "{controller=News}/{action=Index}/{id?}");
+                endpoints.MapHub<CommentsHub>("/commentsHub");
             });
             app.MapWhen(context => context.Request.IsElevated(), branchApp =>
             {
